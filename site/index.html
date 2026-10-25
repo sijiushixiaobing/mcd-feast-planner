@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>麦麦团餐参谋 — 办公室团餐的 AI 决策参谋</title>
+<style>
+  :root {
+    --mcd-yellow: #FFBC0D;
+    --mcd-red: #D52300;
+    --ink: #292929;
+    --bg: #FFF8EE;
+    --card: #ffffff;
+    --muted: #8a8a8a;
+    --line: #f0e6d6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 64px; }
+  header { text-align: center; padding: 28px 0 8px; }
+  .badge { display: inline-block; background: var(--mcd-yellow); color: var(--ink); font-size: 13px; font-weight: 600; padding: 4px 14px; border-radius: 999px; margin-bottom: 14px; }
+  h1 { font-size: 34px; letter-spacing: 1px; }
+  .tagline { color: var(--muted); font-size: 16px; margin-top: 8px; }
+  .cta-row { margin-top: 18px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn { display: inline-block; padding: 10px 22px; border-radius: 999px; font-size: 15px; font-weight: 600; text-decoration: none; }
+  .btn-primary { background: var(--mcd-red); color: #fff; }
+  .btn-ghost { border: 1.5px solid var(--ink); color: var(--ink); }
+  section { margin-top: 40px; }
+  h2 { font-size: 22px; margin-bottom: 14px; padding-left: 12px; border-left: 5px solid var(--mcd-yellow); }
+  .pain { background: var(--card); border-radius: 14px; padding: 20px 22px; box-shadow: 0 2px 10px rgba(0,0,0,.05); }
+  .pain p { margin: 6px 0; }
+  .pain .quote { background: #FFF3D6; border-radius: 8px; padding: 10px 14px; font-size: 15px; margin: 10px 0; }
+  .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; font-size: 14px; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px; font-weight: 600; }
+  .arrow { color: var(--mcd-yellow); font-weight: 800; }
+  .result-card { background: var(--card); border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,.08); border-top: 6px solid var(--mcd-yellow); }
+  .result-card h3 { font-size: 18px; margin-bottom: 4px; }
+  .meta { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  td, th { padding: 8px 4px; border-bottom: 1px solid #f5f5f5; text-align: left; }
+  td:nth-child(2), td:nth-child(3), th:nth-child(2), th:nth-child(3) { text-align: right; }
+  .total-line { margin-top: 12px; font-size: 15px; }
+  .total-line b { color: var(--mcd-red); font-size: 22px; }
+  .group-text { background: #FFF3D6; border-radius: 10px; padding: 14px; font-size: 13.5px; white-space: pre-wrap; margin-top: 14px; }
+  .note { color: var(--muted); font-size: 12px; margin-top: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .feat { background: var(--card); border-radius: 14px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+  .feat .icon { font-size: 26px; }
+  .feat h4 { margin: 8px 0 6px; font-size: 16px; }
+  .feat p { font-size: 13.5px; color: #555; }
+  .pitfall { background: #FFF3D6; border-left: 4px solid var(--mcd-yellow); border-radius: 8px; padding: 14px 16px; font-size: 14px; margin-top: 10px; }
+  footer { margin-top: 48px; text-align: center; color: var(--muted); font-size: 13px; }
+  footer a { color: var(--mcd-red); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="badge">1024 程序员节 · 应用创作大赛参赛作品</div>
+  <h1>🍔 麦麦团餐参谋</h1>
+  <p class="tagline">报人数和人均预算，30 秒出一页麦当劳团餐方案 + 群发接龙文本</p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="https://github.com/sijiushixiaobing/mcd-feast-planner">GitHub 仓库</a>
+    <a class="btn btn-ghost" href="https://github.com/M-China/mcd-developer-innovation-challenge/issues/1351">麦当劳大赛参赛 Issue</a>
+  </div>
+</header>
+
+<section>
+  <h2>解决什么问题</h2>
+  <div class="pain">
+    <div class="quote">"下午点麦当劳，5 个人，人均 35 左右，有人想喝奶茶……"</div>
+    <p>人工流程：打开 App → 翻菜单 → 凑人数 → 找券 → 按计算器 → 复制到群里催接龙。全程 15 分钟起，还经常算错人均、漏用券。</p>
+    <p>这个 Skill 把整条链路交给 AI：</p>
+    <div class="flow">
+      <span class="step">收集需求</span><span class="arrow">→</span>
+      <span class="step">定位门店</span><span class="arrow">→</span>
+      <span class="step">拉菜单</span><span class="arrow">→</span>
+      <span class="step">三重用券检查</span><span class="arrow">→</span>
+      <span class="step">券有效性验算</span><span class="arrow">→</span>
+      <span class="step">精确算价</span><span class="arrow">→</span>
+      <span class="step">群发文本</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>真实效果（MCP 实时查询）</h2>
+  <div class="result-card">
+    <h3>🍔 麦麦团餐方案｜麦当劳（西安开元餐厅·到店自取）</h3>
+    <div class="meta">5 人 · 人均预算 ¥35 · 2026-10-25 11:15 实时查询 · 距查询位置约 51 米</div>
+    <table>
+      <tr><th>品名</th><th>数量</th><th>小计</th></tr>
+      <tr><td>麦辣鸡腿汉堡三件套</td><td>3</td><td>¥100.5</td></tr>
+      <tr><td>板烧鸡腿堡三件套</td><td>2</td><td>¥69.0</td></tr>
+    </table>
+    <div class="total-line">原价 ¥169.5 → 实付 <b>¥169.5</b> → 人均 <b>¥33.9</b></div>
+    <div class="group-text">【今日团餐】麦当劳（西安开元餐厅），5 人，人均约 ¥33.9
+麦辣鸡腿汉堡三件套 x3
+板烧鸡腿堡三件套 x2
+想吃的扣 1，截止 17:00</div>
+    <p class="note">口径标注：以上取自麦当劳 MCP 实时查询，最终价格以麦当劳 App 下单页为准。</p>
+  </div>
+</section>
+
+<section>
+  <h2>能力清单</h2>
+  <div class="grid">
+    <div class="feat"><div class="icon">📍</div><h4>门店定位</h4><p>按城市/商圈查可点餐门店，按距离择优，方案注明店名与门店编码。</p></div>
+    <div class="feat"><div class="icon">📖</div><h4>菜单拉取</h4><p>拉全店在售菜单（实测 108 个餐品 / 15 个分类），优先套餐与多人餐。</p></div>
+    <div class="feat"><div class="icon">🎫</div><h4>三重用券检查</h4><p>门店券 + 卡包券 + 麦麦省待领券，一个不漏。</p></div>
+    <div class="feat"><div class="icon">✅</div><h4>券有效性验算</h4><p>卡包券不保证可用，一律经 calculate-price 实算验证后才写入方案。</p></div>
+    <div class="feat"><div class="icon">🧮</div><h4>精确算价</h4><p>原价/优惠/实付/人均，超预算自动降档换组合。</p></div>
+    <div class="feat"><div class="icon">📋</div><h4>群发点单文本</h4><p>直接复制粘贴到微信群的接龙格式。</p></div>
+    <div class="feat"><div class="icon">🏢</div><h4>企业团餐进阶</h4><p>beType=6 团餐场景 + 助餐服务 + 团餐满减规则查询。</p></div>
+    <div class="feat"><div class="icon">🔥</div><h4>营养备注</h4><p>160 个餐品营养数据，控卡人群友好。</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>开发踩坑（集成经验）</h2>
+  <div class="pitfall">① <b>query-nearby-stores</b> 的 city 与 keyword 必须同时传，只传 city 返回 600058「城市名或者关键词不能为空」。</div>
+  <div class="pitfall">② 到店自取场景（beType=1）不要传 beCode，传了 query-meals / query-meal-detail 会报错。</div>
+  <div class="pitfall">③ query-my-coupons 返回的券含已过期的，不能直接当可用券用——实测一张「11.9元麦辣鸡腿堡」卡包券经 calculate-price 返回 600012「此卡券不在使用日期内」。</div>
+  <div class="pitfall">④ calculate-price 的券要挂在具体商品项（couponId + couponCode），不支持整单挂券。</div>
+</section>
+
+<section>
+  <h2>安全与合规</h2>
+  <div class="pain">
+    <p>· <b>只读 + 算价</b>：不调用 create-order / cancel-order / mall-create-order / party-order-create / auto-bind-coupons 等任何写操作，下单与付款由用户在麦当劳官方渠道完成。</p>
+    <p>· <b>无凭证泄露</b>：Token 只走环境变量 MCD_MCP_TOKEN，仓库与页面内无任何真实凭证。</p>
+    <p>· <b>无编造数据</b>：菜单、价格、优惠券全部以 MCP 实时返回为准。</p>
+  </div>
+</section>
+
+<footer>
+  <p>基于<a href="https://open.mcd.cn/mcp">麦当劳中国官方 MCP</a>开发 · 全部使用腾讯 WorkBuddy 开发（<a href="https://github.com/sijiushixiaobing/mcd-feast-planner/blob/main/workbuddy.md">workbuddy.md</a>）</p>
+  <p>麦当劳程序员创意开发大赛 · WorkBuddy 1024 造物挑战 · 2026-10-25</p>
+</footer>
+
+</div>
+</body>
+</html>
