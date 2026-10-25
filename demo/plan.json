@@ -1,0 +1,14 @@
+{
+  "store": "麦当劳（西安开元餐厅·到店自取）",
+  "people": 5,
+  "budget_per_person": 35,
+  "items": [
+    {"name": "麦辣鸡腿汉堡三件套", "qty": 3, "price": 33.5},
+    {"name": "板烧鸡腿堡三件套", "qty": 2, "price": 34.5}
+  ],
+  "coupon": "本店当前无可用门店券；卡包中「11.9元麦辣鸡腿堡」已过使用期（calculate-price 返回 600012）",
+  "original_total": 169.5,
+  "final_total": 169.5,
+  "queried_at": "2026-10-25 11:15",
+  "note": "门店：麦当劳西安开元餐厅（storeCode 1960622，东大街解放市场6号首层，距查询位置约 51 米）。数据为 MCP 实时查询真实返回。"
+}
